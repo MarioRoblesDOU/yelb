@@ -4,7 +4,7 @@ jobs:
   build:
     working_directory: /yelb-db
     docker:
-      - image: docker:20.10-git
+      - image: docker:20.10-cli
     environment:
       AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
       AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
@@ -21,6 +21,10 @@ jobs:
           name: Build Docker image
           command: |
             docker build -t yeldb .
+
+      - run:
+          name: Pushing to ECR
+          command: |
             $(aws ecr get-login --no-include-email)
             docker tag yelbdb:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/yelbdb:latest
             docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/yelbdb:latest
