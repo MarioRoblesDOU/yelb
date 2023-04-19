@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: amazon/aws-cli
+      - image: docker:20.10-git
     environment:
       AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
       AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
@@ -11,14 +11,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install Docker
+          name: Install aws cli
           command: |
-              apk update
-              apk add --no-cache ca-certificates curl gnupg
-              curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | gpg --import
-              echo "https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/stable" >> /etc/apk/repositories
-              apk update
-              apk add docker
+            apk add --no-cache aws-cli
 
       - run:
           name: Build Docker image
