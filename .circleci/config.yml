@@ -2,7 +2,6 @@ version: 2.1
 
 jobs:
   build:
-    working_directory: yelb-db
     docker:
       - image: docker:20.10-cli
     environment:
@@ -20,7 +19,7 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            ls
+            cd yelb-db/
             docker build -t yeldb .
 
       - run:
