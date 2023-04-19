@@ -7,6 +7,8 @@ jobs:
     environment:
       AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
       AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+      AWS_DEFAULT_REGION: $AWS_REGION
+      AWS_REGION: $AWS_REGION
     steps:
       - checkout
       - setup_remote_docker
@@ -24,6 +26,7 @@ jobs:
       - run:
           name: Pushing to ECR
           command: |
+            echo "AWS_REGION=$AWS_REGION"
             $(aws ecr get-login --no-include-email)
-            docker tag yelbdb:latest 237889007525.dkr.ecr.us-west-1.amazonaws.com/yelbdb:latest
-            docker push 237889007525.dkr.ecr.us-west-1.amazonaws.com/yelbdb:latest
+            docker tag yelbdb:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/yelbdb:latest
+            docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/yelbdb:latest
