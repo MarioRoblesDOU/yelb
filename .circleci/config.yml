@@ -3,14 +3,14 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: docker:17.05.0-ce-git
+      - image: docker:20.10-cli
     steps:
       - checkout
       - setup_remote_docker
       - run:
           name: Install aws cli
           command: |
-            apk add --no-cache awscli==1.11.76
+            apk add --no-cache aws-cli
 
       - run:
           name: Build Docker image
@@ -30,9 +30,6 @@ jobs:
       - run:
           name: Pushing to ECR
           command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              login="$(aws ecr get-login --region us-west-1)"
-              ${login}
+              aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin ${ECR_ENDPOINT}
               docker tag yelbdb "${ECR_ENDPOINT}/yelbdb:${CIRCLE_SHA1}"
               docker push "${ECR_ENDPOINT}/yelbdb:${CIRCLE_SHA1}"
-            fi
