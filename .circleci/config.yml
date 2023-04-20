@@ -25,7 +25,7 @@ jobs:
           name: Pushing to ECR
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              login="$(aws ecr get-login)"
+              login="$(aws ecr get-login --region us-west-1)"
               ${login}
               docker tag yelbdb "${ECR_ENDPOINT}/yelbdb:${CIRCLE_SHA1}"
               docker push "${ECR_ENDPOINT}/yelbdb:${CIRCLE_SHA1}"
