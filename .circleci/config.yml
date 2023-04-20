@@ -11,25 +11,19 @@ jobs:
           name: Install aws cli
           command: |
             apk add --no-cache aws-cli
-
-      - run:
-          name: Build Docker image
-          command: |
-            cd yelb-db/
-            docker build -t yeldb .
-
       - run:
           name: Config AWS
           command: |
             aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
             aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-            aws configure set default.region us-west-1
-
-
+            aws configure set default.region $AWS_REGION
 
       - run:
-          name: Pushing to ECR
+          name: Build & Push Docker image
           command: |
-              aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin ${ECR_ENDPOINT}
-              docker tag yelbdb "${ECR_ENDPOINT}/yelbdb:${CIRCLE_SHA1}"
-              docker push "${ECR_ENDPOINT}/yelbdb:${CIRCLE_SHA1}"
+            cd yelb-db/
+            docker build -t yelbdb .
+            aws ecr get-login-password --region $AWS_REGION | docker login --username $AWS_USER --password-stdin ${ECR_ENDPOINT}
+            docker tag yelbdb "${ECR_ENDPOINT}/yelbdb:${CIRCLE_SHA1}"
+            docker push "${ECR_ENDPOINT}/yelbdb:${CIRCLE_SHA1}"
+
