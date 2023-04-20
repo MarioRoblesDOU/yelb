@@ -4,9 +4,6 @@ jobs:
   build:
     docker:
       - image: docker:20.10-cli
-    environment:
-      AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-      AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
     steps:
       - checkout
       - setup_remote_docker
@@ -20,6 +17,13 @@ jobs:
           command: |
             cd yelb-db/
             docker build -t yeldb .
+
+      - run:
+          name: Config AWS
+          command: |
+            aws configure --access-key $AWS_ACCESS_KEY_ID --secret-key $AWS_SECRET_ACCESS_KEY
+            aws configure set region us-west-1
+
 
       - run:
           name: Pushing to ECR
