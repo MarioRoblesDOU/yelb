@@ -24,6 +24,9 @@ jobs:
       - run:
           name: Pushing to ECR
           command: |
-            aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 237889007525.dkr.ecr.us-west-1.amazonaws.com
-            docker tag yelbdb:latest $AWS_ACCOUNT_ID.dkr.ecr.us-west-1.amazonaws.com/yelbdb:latest
-            docker push $AWS_ACCOUNT_ID.dkr.ecr.us-west-1.amazonaws.com/yelbdb:latest
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              login="$(aws ecr get-login)"
+              ${login}
+              docker tag yelbdb "${ECR_ENDPOINT}/yelbdb:${CIRCLE_SHA1}"
+              docker push "${ECR_ENDPOINT}/yelbdb:${CIRCLE_SHA1}"
+            fi
